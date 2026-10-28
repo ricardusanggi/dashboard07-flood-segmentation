@@ -1,0 +1,255 @@
+/* ========================================================= */
+/*                     TAILWIND BASE                         */
+/* ========================================================= */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ========================================================= */
+/*                     AI HERO BACKGROUND                    */
+/* ========================================================= */
+
+/* Animated AI gradient background */
+
+.ai-gradient-bg {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(250,204,21,0.25), transparent 60%),
+    linear-gradient(
+      130deg,
+      #020617,
+      #0f172a,
+      #d97706,
+      #0f172a,
+      #020617
+    );
+  background-size: 300% 300%;
+  animation: aiGradientMove 16s ease infinite;
+}
+
+@keyframes aiGradientMove {
+  0% { background-position:0% 50% }
+  50% { background-position:100% 50% }
+  100% { background-position:0% 50% }
+}
+
+
+/* ========================================================= */
+/*                     HERO GLOW EFFECT                      */
+/* ========================================================= */
+
+.hero-glow {
+  position:absolute;
+  width:900px;
+  height:900px;
+  background:radial-gradient(circle,rgba(250,204,21,0.35) 0%,transparent 70%);
+  filter:blur(160px);
+  top:-200px;
+  left:50%;
+  transform:translateX(-50%);
+  pointer-events:none;
+  z-index:0;
+}
+
+
+/* ========================================================= */
+/*                  NEURAL NETWORK BACKGROUND                */
+/* ========================================================= */
+
+.neural-network {
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* glowing nodes */
+
+.neural-node {
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:#facc15;
+  border-radius:50%;
+  box-shadow:
+    0 0 8px #facc15,
+    0 0 14px #facc15,
+    0 0 20px #facc15;
+  animation:neuralPulse 4s infinite ease-in-out;
+}
+
+/* node pulse */
+
+@keyframes neuralPulse{
+  0%{transform:scale(1);opacity:.4}
+  50%{transform:scale(1.7);opacity:1}
+  100%{transform:scale(1);opacity:.4}
+}
+
+/* connection lines */
+
+.neural-line{
+  position:absolute;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#facc15,transparent);
+  opacity:.25;
+}
+
+
+/* ========================================================= */
+/*                 FLOATING PARTICLES SYSTEM                 */
+/* ========================================================= */
+
+.ai-particles{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.ai-particle{
+  position:absolute;
+  width:3px;
+  height:3px;
+  background:#facc15;
+  border-radius:50%;
+  opacity:.35;
+  animation:particleFloat linear infinite;
+}
+
+@keyframes particleFloat{
+  0%{
+    transform:translateY(0) translateX(0);
+    opacity:0;
+  }
+  30%{
+    opacity:.4;
+  }
+  70%{
+    opacity:.4;
+  }
+  100%{
+    transform:translateY(-120vh) translateX(40px);
+    opacity:0;
+  }
+}
+
+
+/* ========================================================= */
+/*                 TECH GRID BACKGROUND                      */
+/* ========================================================= */
+
+.tech-grid{
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+}
+
+
+/* ========================================================= */
+/*                   HERO TEXT ANIMATION                     */
+/* ========================================================= */
+
+@keyframes heroReveal{
+  from{
+    opacity:0;
+    transform:translateY(25px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.animate-hero{
+  animation:heroReveal .8s ease forwards;
+}
+
+
+/* ========================================================= */
+/*                    GLASS PANEL SYSTEM                     */
+/* ========================================================= */
+
+.glass-panel{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(16px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:16px;
+}
+
+.dark .glass-panel{
+  background:rgba(15,23,42,0.6);
+}
+
+
+/* ========================================================= */
+/*                PERFORMANCE CARD EFFECT                    */
+/* ========================================================= */
+
+.metric-card{
+  transition:all .25s ease;
+}
+
+.metric-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+
+/* ========================================================= */
+/*                     RADAR CHART GLOW                      */
+/* ========================================================= */
+
+.radar-glow{
+  filter:drop-shadow(0 0 12px rgba(250,204,21,.6));
+}
+
+
+/* ========================================================= */
+/*                    SCROLL REVEAL SYSTEM                   */
+/* ========================================================= */
+
+.reveal{
+  opacity:0;
+  transform:translateY(30px);
+  transition:all .6s ease;
+}
+
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+
+/* ========================================================= */
+/*                       MODAL ANIMATION                     */
+/* ========================================================= */
+
+@keyframes modalPop {
+  0% { transform: scale(.95); opacity:0 }
+  100% { transform: scale(1); opacity:1 }
+}
+
+.modal-pop {
+  animation: modalPop .25s ease-out;
+}
+
+
+/* ========================================================= */
+/*                    EGG FLOAT ANIMATION                    */
+/* ========================================================= */
+
+@keyframes eggFloat {
+  0% { transform: translateY(0px) rotate(-2deg) }
+  50% { transform: translateY(-10px) rotate(2deg) }
+  100% { transform: translateY(0px) rotate(-2deg) }
+}
+
+.animate-egg {
+  animation: eggFloat 2s ease-in-out infinite;
+}

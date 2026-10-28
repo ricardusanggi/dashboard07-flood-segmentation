@@ -1,0 +1,31 @@
+docker compose down -v
+sudo rm -rf backend/storage/*
+docker compose build --no-cache
+docker compose up
+
+docker compose down -v
+docker compose up --build
+🚀 Kalau Mau Benar-Benar Production Style
+docker compose build
+docker compose up -d
+
+🎯 Ringkasan Super Sederhana Build Tanpa Stop Dulu
+docker compose down -v
+sudo rm -rf backend/storage/*
+docker compose up -d --build
+docker compose up --build --remove-orphans
+docker compose up
+
+
+
+
+docker stack deploy -c docker-stack.yml flood_seg
+Urutan lengkap setiap kali update:
+
+docker compose down -v
+sudo rm -rf backend/storage/*
+docker compose up -d --build
+docker push localhost:5000/flood_segmentation_backend:latest
+docker push localhost:5000/flood_segmentation_frontend:latest
+docker stack deploy -c docker-stack.yml flood_seg
+docker compose up

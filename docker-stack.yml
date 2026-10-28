@@ -1,0 +1,164 @@
+# docker-stack.yml — Docker Swarm production deployment
+# Usage:
+#   1. Build images dulu:       docker compose build
+#                               docker build -t 10.8.0.6:5007/dashboard07-flood-segmentation-gateway:latest nginx/
+#   2. Push ke registry:        docker push 10.8.0.6:5007/dashboard07-flood-segmentation-backend:latest
+#                               docker push 10.8.0.6:5007/dashboard07-flood-segmentation-frontend:latest
+#                               docker push 10.8.0.6:5007/dashboard07-flood-segmentation-gateway:latest
+#   3. Init swarm (sekali):     docker swarm init
+#   4. Deploy stack:            docker stack deploy -c docker-stack.yml flood_seg
+#   5. Cek status:              docker stack services flood_seg
+#   6. Update (setelah build):  docker stack deploy -c docker-stack.yml flood_seg
+#   7. Hapus stack:             docker stack rm flood_seg
+#   8. Sync model ke worker:    bash scripts/sync_model_to_worker.sh
+#
+# CATATAN PENTING:
+#   - backend   replicas:1 — full service (training, upload, admin, prediksi)
+#   - predict   replicas:2 — PREDICT_ONLY=true, failover /predict & /public
+#   - gateway   replicas:2 — nginx routing: /predict & /public → predict, lainnya → backend
+#   - frontend  replicas:2 — failover UI, VITE_API_URL mengarah ke gateway (port 8009)
+#   - Storage di-mount dari host agar data persisten saat container restart
+#   - docker stack deploy TIDAK mendukung 'build:', gunakan image yg sudah di-build
+#   - Setelah model baru di-approve, jalankan: bash scripts/sync_model_to_worker.sh
+# ============================================================================
+
+version: "3.9"
+
+services:
+
+  backend:
+    image: 10.8.0.6:5007/dashboard07-flood-segmentation-backend:latest
+    ports:
+      - "8007:8007"
+
+    volumes:
+      - /opt/flood_segmentation/storage:/app/storage
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    env_file:
+      - ./backend/.env
+
+    deploy:
+      # JANGAN naikkan replicas > 1:
+      # training menggunakan threading.Lock() (in-memory) dan SQLite
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 5
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: stop-first
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 512M
+
+    networks:
+      - flood_net
+
+
+  predict:
+    image: 10.8.0.6:5007/dashboard07-flood-segmentation-backend:latest
+    ports:
+      - "8017:8007"
+
+    volumes:
+      - /opt/flood_segmentation/storage:/app/storage
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    env_file:
+      - ./backend/.env
+
+    environment:
+      - PREDICT_ONLY=true
+
+    deploy:
+      # replicas: 2 — satu di tiap node untuk failover prediksi
+      replicas: 2
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 5
+        window: 60s
+      update_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: rollback
+        order: start-first
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 256M
+
+    networks:
+      - flood_net
+
+
+  gateway:
+    image: 10.8.0.6:5007/dashboard07-flood-segmentation-gateway:latest
+    ports:
+      - "8027:8027"
+
+    deploy:
+      # replicas: 1 — dikunci di manager agar bisa reach backend via overlay
+      # Gateway tetap menjadi single point of entry, backend & predict yang redundant
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+      update_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: rollback
+        order: start-first
+
+    networks:
+      - flood_net
+
+
+  frontend:
+    image: 10.8.0.6:5007/dashboard07-flood-segmentation-frontend:latest
+    ports:
+      - "3007:80"
+
+    deploy:
+      # replicas: 1, dikunci ke manager sementara — node worker (Sembarang-Vision)
+      # belum di-whitelist sebagai insecure-registry untuk 10.8.0.6:5007 sehingga
+      # gagal pull image baru. Kembalikan ke replicas:2 tanpa constraint setelah
+      # node worker diperbaiki (lihat catatan di percakapan).
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 5
+        window: 60s
+      update_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: rollback
+        order: start-first
+
+    networks:
+      - flood_net
+
+
+networks:
+  flood_net:
+    driver: overlay

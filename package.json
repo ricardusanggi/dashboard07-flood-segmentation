@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "lucide-react": "^0.576.0",
+    "react-hot-toast": "^2.6.0",
+    "recharts": "^3.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier": "^3.8.1"
+  }
+}

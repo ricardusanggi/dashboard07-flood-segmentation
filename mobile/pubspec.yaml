@@ -1,0 +1,35 @@
+name: flood_segmentation
+description: Aplikasi Deteksi & Segmentasi Banjir berbasis Deep Learning
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP client
+  dio: ^5.4.3
+
+  # Secure token storage
+  flutter_secure_storage: ^9.2.2
+
+  # Image & file picking
+  image_picker: ^1.1.2
+  file_picker: ^8.0.7
+
+  # State management
+  provider: ^6.1.2
+
+  # UI
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

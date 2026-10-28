@@ -1,0 +1,38 @@
+# Backend — Segmentasi Citra
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+python-multipart
+passlib
+bcrypt==3.2.2
+python-jose[cryptography]
+pydantic[email]
+pydantic-settings
+slowapi
+
+# ML
+numpy
+scikit-learn
+pillow
+torch
+torchvision
+torchaudio
+scipy
+tqdm
+
+# Computer Vision
+opencv-python-headless
+opencv-contrib-python-headless
+
+# Optional ML utils
+matplotlib
+mealpy
+imagehash
+
+# Server
+gunicorn
+
+#addon
+psutil
+loguru
